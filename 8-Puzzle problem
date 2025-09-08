@@ -1,0 +1,36 @@
+from collections import deque
+
+# Moves (up, down, left, right)
+moves = [(-1,0),(1,0),(0,-1),(0,1)]
+
+def get_neighbors(state):
+    res = []
+    i = state.index("0")
+    x, y = divmod(i, 3)
+    for dx, dy in moves:
+        nx, ny = x+dx, y+dy
+        if 0 <= nx < 3 and 0 <= ny < 3:
+            j = nx*3+ny
+            s = list(state)
+            s[i], s[j] = s[j], s[i]
+            res.append("".join(s))
+    return res
+
+def solve(start, goal):
+    q = deque([(start, [start])])
+    seen = {start}
+    while q:
+        state, path = q.popleft()
+        if state == goal: return path
+        for nxt in get_neighbors(state):
+            if nxt not in seen:
+                seen.add(nxt)
+                q.append((nxt, path+[nxt]))
+
+# Example
+start = "123405678"   # 0 = blank
+goal  = "123456780"
+
+sol = solve(start, goal)
+for s in sol:
+    print(s[0:3], "\n"+s[3:6], "\n"+s[6:9], "\n")
